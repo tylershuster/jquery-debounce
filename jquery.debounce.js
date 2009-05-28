@@ -1,5 +1,5 @@
 /**
- * Debounce function's decorator plugin 1.0.2
+ * Debounce and throttle function's decorator plugin 1.0.3
  *
  * Copyright (c) 2009 Filatov Dmitry (alpha@zforms.ru)
  * Dual licensed under the MIT and GPL licenses:
@@ -10,34 +10,64 @@
 
 (function($) {
 
-$.debounce = function(fn, timeout, invokeAsap, context) {
+$.extend({
 
-	if(arguments.length == 3 && typeof invokeAsap != 'boolean') {
-		context = invokeAsap;
-		invokeAsap = false;
-	}
+	debounce : function(fn, timeout, invokeAsap, context) {
 
-	var timer;
-
-	return function() {
-
-		var args = arguments;
-
-		if(invokeAsap && !timer) {
-			fn.apply(context, args);
+		if(arguments.length == 3 && typeof invokeAsap != 'boolean') {
+			context = invokeAsap;
+			invokeAsap = false;
 		}
 
-		clearTimeout(timer);
+		var timer;
 
-		timer = setTimeout(function() {
-			if(!invokeAsap) {
+		return function() {
+
+			var args = arguments;
+
+			if(invokeAsap && !timer) {
 				fn.apply(context, args);
 			}
-			timer = null;
-		}, timeout);
 
-	};
+			clearTimeout(timer);
 
-};
+			timer = setTimeout(function() {
+				if(!invokeAsap) {
+					fn.apply(context, args);
+				}
+				timer = null;
+			}, timeout);
+
+		};
+
+	},
+
+	throttle : function(fn, timeout, context) {
+
+		var timer, args, needInvoke;
+
+		return function() {
+
+			args = arguments;
+			needInvoke = true;
+
+			if(!timer) {
+				(function() {
+					if(needInvoke) {
+						fn.apply(context, args);
+						needInvoke = false;
+						timer = setTimeout(arguments.callee, timeout);
+					}
+					else {
+						timer = null;
+					}
+				})();
+			}
+
+		};
+
+	}
+
+});
 
 })(jQuery);
