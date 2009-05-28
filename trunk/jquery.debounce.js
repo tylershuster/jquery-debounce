@@ -1,5 +1,5 @@
 /**
- * Debounce function's decorator plugin 1.0.1
+ * Debounce function's decorator plugin 1.0.2
  *
  * Copyright (c) 2009 Filatov Dmitry (alpha@zforms.ru)
  * Dual licensed under the MIT and GPL licenses:
@@ -10,18 +10,30 @@
 
 (function($) {
 
-$.debounce = function(fn, timeout, context) {
+$.debounce = function(fn, timeout, invokeAsap, context) {
+
+	if(arguments.length == 3 && typeof invokeAsap != 'boolean') {
+		context = invokeAsap;
+		invokeAsap = false;
+	}
 
 	var timer;
 
 	return function() {
 
-		clearTimeout(timer);
-
 		var args = arguments;
 
-		timer = setTimeout(function() {
+		if(invokeAsap && !timer) {
 			fn.apply(context, args);
+		}
+
+		clearTimeout(timer);
+
+		timer = setTimeout(function() {
+			if(!invokeAsap) {
+				fn.apply(context, args);
+			}
+			timer = null;
 		}, timeout);
 
 	};
