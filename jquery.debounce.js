@@ -1,5 +1,5 @@
 /**
- * Debounce and throttle function's decorator plugin 1.0.3
+ * Debounce and throttle function's decorator plugin 1.0.4
  *
  * Copyright (c) 2009 Filatov Dmitry (alpha@zforms.ru)
  * Dual licensed under the MIT and GPL licenses:
