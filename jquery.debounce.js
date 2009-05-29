@@ -44,18 +44,17 @@ $.extend({
 
 	throttle : function(fn, timeout, context) {
 
-		var timer, args, needInvoke;
+		var timer, args;
 
 		return function() {
 
 			args = arguments;
-			needInvoke = true;
 
 			if(!timer) {
 				(function() {
-					if(needInvoke) {
+					if(args) {
 						fn.apply(context, args);
-						needInvoke = false;
+						args = null;
 						timer = setTimeout(arguments.callee, timeout);
 					}
 					else {
