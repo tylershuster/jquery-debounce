@@ -1,5 +1,5 @@
 /**
- * Debounce and throttle function's decorator plugin 1.0.4
+ * Debounce and throttle function's decorator plugin 1.0.5
  *
  * Copyright (c) 2009 Filatov Dmitry (alpha@zforms.ru)
  * Dual licensed under the MIT and GPL licenses:
@@ -12,10 +12,10 @@
 
 $.extend({
 
-	debounce : function(fn, timeout, invokeAsap, context) {
+	debounce : function(fn, timeout, invokeAsap, ctx) {
 
 		if(arguments.length == 3 && typeof invokeAsap != 'boolean') {
-			context = invokeAsap;
+			ctx = invokeAsap;
 			invokeAsap = false;
 		}
 
@@ -24,17 +24,14 @@ $.extend({
 		return function() {
 
 			var args = arguments;
+            ctx = ctx || this;
 
-			if(invokeAsap && !timer) {
-				fn.apply(context, args);
-			}
+			invokeAsap && !timer && fn.apply(ctx, args);
 
 			clearTimeout(timer);
 
 			timer = setTimeout(function() {
-				if(!invokeAsap) {
-					fn.apply(context, args);
-				}
+				!invokeAsap && fn.apply(ctx, args);
 				timer = null;
 			}, timeout);
 
@@ -42,19 +39,21 @@ $.extend({
 
 	},
 
-	throttle : function(fn, timeout, context) {
+	throttle : function(fn, timeout, ctx) {
 
-		var timer, args;
+		var timer, args, needInvoke;
 
 		return function() {
 
 			args = arguments;
+			needInvoke = true;
+			ctx = ctx || this;
 
 			if(!timer) {
 				(function() {
-					if(args) {
-						fn.apply(context, args);
-						args = null;
+					if(needInvoke) {
+						fn.apply(ctx, args);
+						needInvoke = false;
 						timer = setTimeout(arguments.callee, timeout);
 					}
 					else {
