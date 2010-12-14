@@ -50,15 +50,15 @@ $.extend({
 			ctx = ctx || this;
 
 			timer || (function() {
-                if(needInvoke) {
-                    fn.apply(ctx, args);
-                    needInvoke = false;
-                    timer = setTimeout(arguments.callee, timeout);
-                }
-                else {
-                    timer = null;
-                }
-            })();
+				if(needInvoke) {
+					fn.apply(ctx, args);
+					needInvoke = false;
+					timer = setTimeout(arguments.callee, timeout);
+				}
+				else {
+					timer = null;
+				}
+			})();
 
 		};
 
